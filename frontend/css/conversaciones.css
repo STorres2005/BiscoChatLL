@@ -1,0 +1,1775 @@
+:root {
+  --bg: #F7F0E3;
+  --panel: #E7EAEE;
+  --rail: #F1E6CF;
+  --line: #C9CED6;
+  --text: #1f2a44;
+  --muted: #5f697a;
+  --blue: #3F80C7;
+  --white: #fff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.app {
+  display: grid;
+  height: 100vh;
+  grid-template-columns: 72px 360px 1fr;
+  grid-template-rows: 64px 1fr;
+  grid-template-areas:
+    "rail topbar topbar"
+    "rail list chat";
+}
+
+/* --- RAIL --- */
+.rail {
+  grid-area: rail;
+  background: var(--rail);
+  border-right: 2px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 12px 0;
+  position: relative;
+}
+
+.rail .logo,
+.icon-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--blue);
+  border: 2px solid var(--line);
+  cursor: pointer;
+  transition: transform .2s ease;
+}
+
+.icon-btn:hover {
+  transform: scale(1.05);
+}
+
+.rail .logo img,
+.icon-btn img {
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
+}
+
+/* --- TOPBAR --- */
+.topbar {
+  grid-area: topbar;
+  background: var(--bg);
+  border-bottom: 2px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+/* --- LISTA DE CHATS --- */
+.list {
+  grid-area: list;
+  background: var(--panel);
+  border-right: 2px solid var(--line);
+  display: flex;
+  flex-direction: column;
+}
+
+.search {
+  padding: 12px;
+  border-bottom: 2px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.search input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid var(--line);
+  border-radius: 10px;
+}
+
+.threads {
+  flex: 1;
+  overflow: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.thread {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #dde3ea;
+  border: 2px solid var(--line);
+  border-radius: 10px;
+  padding: 10px;
+  cursor: pointer;
+  transition: background .2s ease, border .2s ease;
+  min-width: 0;
+}
+
+
+.thread:hover {
+  background: #d4dae2;
+  border-color: #aeb5bf;
+}
+
+.avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--line);
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tname {
+  font-weight: 700;
+  margin-bottom: 4px;
+  font-size: 15px;
+
+  /* también que se recorte si es muy largo */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tlast {
+  color: var(--muted);
+  font-size: 13px;
+
+  /* 👇 Evita que se salga del recuadro con textos tipo aaaaaaaaaaaa */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* Columna derecha: hora + badge de no leídos */
+.right-info {
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+/* Hora verde tipo WhatsApp */
+.hora {
+  font-size: 13px;
+  font-weight: 600;
+  color: #21c063;
+  /* puedes cambiar el verde si quieres */
+}
+
+/* Circulito verde de mensajes no leídos */
+.badge-unread {
+  background: #21c063;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+
+  min-width: 22px;
+  height: 22px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+  padding: 0 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+/* Columna donde van nombre y último mensaje */
+.thread .info {
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* --- CHAT --- */
+.chat {
+  grid-area: chat;
+  display: flex;
+  flex-direction: column;
+  background: #d9dce1;
+  min-width: 0;   /* ← ESTE ES EL FIX QUE TE ARREGLA TODO */
+  min-height: 0;   /* 👈 FALTABA ESTO */
+}
+
+/* --- CHAT HEADER --- */
+.chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  /* nombre + avatar alineados */
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 2px solid var(--line);
+  background: #d1d6dd;
+}
+
+.chat-header .avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--line);
+  cursor: pointer;
+}
+
+/* Contenedor de nombre + estado */
+.chat-header .user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  /* Pega nombre y en línea a la izquierda */
+  justify-content: center;
+  line-height: 1.2;
+}
+
+/* Nombre */
+.chat-header .name {
+  font-weight: 700;
+  font-size: 16px;
+  margin: 0;
+}
+
+/* Estado (en línea / última vez) */
+.chat-header .status {
+  font-size: 13px;
+  color: #666;
+  margin: 0;
+}
+
+/* 🔥 FIX DEFINITIVO: Subtítulo visible SIEMPRE */
+#chatStatus {
+  display: block !important;
+  line-height: 15px;
+  margin-top: 2px;
+  color: #4a4a4a !important;
+}
+.chat-actions {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 12px;
+  margin-left: auto; /* Se van a la derecha */
+}
+
+#groupSubtitle {
+  display: block !important;
+  line-height: 15px;
+  margin-top: 2px;
+  color: #5f697a !important;
+}
+
+.chat-header .call img {
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
+}
+
+/* --- MENSAJES --- */
+.messages {
+  flex: 1;
+  overflow: auto;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;   /* 👈 NECESARIO EN CONTENEDORES FLEX DENTRO DE GRID */
+}
+
+.msg {
+  max-width: 72%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 2px solid var(--line);
+  font-size: 15px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  /* ayuda con 'aaaaaaa...' */
+  position: relative;
+  /* 👈 necesario para colocar la reacción abajo */
+  display: inline-block;
+  /* para que la burbuja tenga el ancho del texto */
+}
+
+/* Bloque de cita cuando el mensaje es una RESPUESTA a otro */
+.msg-reply {
+  margin: -6px -8px 6px -8px;
+  padding: 4px 8px;
+  background: #f3f7ff;
+  border-left: 3px solid var(--blue);
+  border-radius: 10px 10px 6px 6px;
+}
+
+.msg-reply-author {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--blue);
+  margin-bottom: 2px;
+}
+
+.msg-reply-text {
+  font-size: 13px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Resumen del mensaje al que se responde, DENTRO de la burbuja */
+.msg-reply-inline {
+  display: grid;
+  grid-template-columns: 4px 1fr;
+  gap: 8px;
+  margin-bottom: 6px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.me .msg-reply-inline {
+  background: #f2f6ff;
+}
+
+.you .msg-reply-inline {
+  background: #f0f2f5;
+}
+
+.msg-reply-bar {
+  width: 4px;
+  border-radius: 4px;
+  background: var(--blue);
+}
+
+.msg-reply-content {
+  min-width: 0;
+}
+
+.msg-reply-author {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--blue);
+  margin-bottom: 2px;
+}
+
+.msg-reply-text {
+  font-size: 13px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.me {
+  align-self: flex-end;
+  background: #fff;
+}
+
+.you {
+  align-self: flex-start;
+  background: #eee;
+}
+
+
+/* --- COMPOSER --- */
+.composer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border-top: 2px solid var(--line);
+  background: var(--bg);
+}
+
+.composer input {
+  flex: 1;
+  padding: 12px;
+  border: 2px solid var(--line);
+  border-radius: 12px;
+}
+
+.circle-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--blue);
+  border: 2px solid var(--line);
+  cursor: pointer;
+  transition: transform .2s ease;
+}
+
+.circle-btn:hover {
+  transform: scale(1.05);
+}
+
+.circle-btn img {
+  width: 85%;
+  height: 85%;
+  object-fit: contain;
+}
+
+/* ===== FIX REAL OFICIAL — HEADER ORDEN PERFECTO ===== */
+
+.chat-header .user-info {
+  flex: 1;
+}
+
+/* SIEMPRE pegado al lado izquierdo del botón de llamada */
+.chat-header .add-members {
+  order: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* BOTÓN DE LLAMADA SIEMPRE AL FINAL */
+.chat-header .call {
+  order: 11;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.chat-header .add-members img {
+    width: 80%;
+    height: 80%;
+    object-fit: contain;
+}
+
+/* Contenedor del texto del mensaje */
+.msg-body {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Estilo cuando el mensaje ya fue eliminado para todos */
+.msg.msg-deleted .msg-body {
+  font-style: italic;
+  color: #8a919e;
+}
+
+/* ===== Mensajes eliminados (para todos) ===== */
+
+.msg.msg-deleted .msg-body {
+  font-style: italic;
+  color: #667781;
+  /* gris tipo WhatsApp */
+}
+
+/* Ocultar los ticks (✓✓) cuando el mensaje está eliminado */
+.msg.msg-deleted .ticks {
+  display: none;
+}
+
+/* Iconito al inicio para mensajes eliminados míos (opcional) */
+.msg.msg-deleted.me .msg-body::before {
+  content: "⦸";
+  /* o el símbolo que más te guste */
+  display: inline-block;
+  margin-right: 6px;
+  font-size: 14px;
+}
+
+
+/* Badge de reacción que NO agranda la burbuja */
+.msg-reaction,
+.msg-reaction-badge {
+  position: absolute;
+  bottom: -10px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--white);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .25);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+/* Alineación según el lado del mensaje */
+.msg.me .msg-reaction,
+.msg.me .msg-reaction-badge {
+  right: 10px;
+}
+
+.msg.you .msg-reaction,
+.msg.you .msg-reaction-badge {
+  left: 10px;
+}
+
+/* En mensajes eliminados para todos, NO mostramos reacción */
+.msg.msg-deleted .msg-reaction,
+.msg.msg-deleted .msg-reaction-badge {
+  display: none;
+}
+
+
+/* =========================================================
+   Barra de RESPUESTA (tipo WhatsApp)
+   ========================================================= */
+.reply-preview {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: #f0f4fa;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.reply-bar {
+  width: 4px;
+  align-self: stretch;
+  border-radius: 8px;
+  background: var(--blue);
+}
+
+.reply-texts {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.reply-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--blue);
+}
+
+.reply-snippet {
+  font-size: 13px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.reply-close {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px 6px;
+}
+
+
+
+/* --- MENÚ MÁS / AJUSTES (misma base) --- */
+.menu-mas {
+  position: absolute;
+  top: 250px;
+  left: 80px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
+  display: none;
+  z-index: 200;
+}
+
+.menu-mas ul {
+  list-style: none;
+  margin: 0;
+  padding: 8px 0;
+}
+
+.menu-mas li {
+  padding: 10px 16px;
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.menu-mas li:hover {
+  background: #f0f0f0;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-card {
+  width: 380px;
+  max-width: 92vw;
+  background: #fff;
+  color: var(--text);
+  border-radius: 16px;
+  border: 2px solid var(--line);
+  padding: 18px;
+}
+
+.modal-header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.modal-header .big-avatar {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--line);
+}
+
+.profile-name {
+  font-weight: 800;
+  font-size: 18px;
+}
+
+.divider {
+  height: 2px;
+  background: var(--line);
+  margin: 10px 0;
+  border-radius: 2px;
+}
+
+.logout {
+  margin-top: 14px;
+  display: block;
+  width: 100%;
+  background: #d94b4b;
+  border: 2px solid #b33d3d;
+  color: #fff;
+  font-weight: 700;
+  padding: 10px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.group-summary h2#groupInfoName {
+  margin: 6px 0 4px;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+/* --- MODAL AÑADIR CONTACTO --- */
+#addContactModal .modal-card {
+  text-align: center;
+}
+
+#addContactModal input {
+  width: 100%;
+  padding: 12px;
+  margin: 12px 0;
+  border: 2px solid var(--line);
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+#addContactModal button {
+  padding: 10px 16px;
+  margin-top: 10px;
+  background: var(--blue);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* =========================================================
+   Modal "Eliminar mensaje" (para mí / para todos)
+   ========================================================= */
+
+/* Usamos la misma overlay genérica */
+#deleteMsgOverlay {
+  display: none;
+  /* se muestra por JS */
+  z-index: 240;
+  /* por encima de otros contenidos */
+}
+
+/* Tarjeta del modal */
+.delete-msg-card {
+  display: none;
+  /* JS la pone en "flex" */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 360px;
+  max-width: 90vw;
+  background: #ffffff;
+  color: var(--text);
+  border-radius: 16px;
+  border: 2px solid var(--line);
+  padding: 18px 18px 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .25);
+  flex-direction: column;
+}
+
+#deleteMsgModal h3 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+#deleteMsgModal p {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.radio-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 6px 0;
+  font-size: 14px;
+}
+
+.radio-row input[type="radio"] {
+  accent-color: var(--blue);
+}
+
+.modal-actions {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: #d94b4b;
+  border-color: #b33d3d;
+  color: #fff;
+  font-weight: 600;
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.btn-secondary {
+  background: #eee;
+  border-color: #ccc;
+  color: #333;
+}
+
+/* =========================================================
+   MODAL "NUEVO GRUPO" — reutiliza estilo del nuevo chat
+   ========================================================= */
+
+.new-group-modal {
+  /* ya hereda de .modal (position: fixed, inset:0) */
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 130;
+}
+
+.new-group-card {
+  width: 420px;
+  max-width: 95vw;
+  max-height: 80vh;
+  /* 👈 límite vertical */
+
+  display: flex;
+  flex-direction: column;
+
+  background: #ffffff;
+  color: var(--text);
+  border-radius: 16px;
+  border: 2px solid var(--line);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
+  overflow: hidden;
+}
+
+
+/* cada paso del asistente ocupa todo el alto disponible dentro del card */
+.group-step {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  /* 👈 importantísimo para permitir scroll interno */
+}
+
+/* barra de seleccionados NO crece, solo la lista */
+.group-selected-bar {
+  flex: 0 0 auto;
+  padding: 6px 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  border-bottom: 1px solid var(--line);
+  background: #f7f7f7;
+}
+
+
+.group-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #e0f3ff;
+  color: #0b4d85;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* la LISTA de contactos del grupo es la que scrollea */
+#newGroupList {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.msg-author-label {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 2px;
+  color: #0b6efb;
+  /* un azul suave tipo WhatsApp */
+}
+
+/* footer con los botones, fijo abajo */
+.group-footer {
+  flex: 0 0 auto;
+  padding: 8px 14px;
+  border-top: 1px solid var(--line);
+  background: #fafafa;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.group-footer-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.group-footer-buttons button {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+
+#groupNextBtn,
+#groupCreateBtn {
+  background: #00a884;
+  border-color: #008f71;
+  color: #fff;
+  font-weight: 600;
+}
+
+#groupNextBtn:disabled,
+#groupCreateBtn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+#groupCancelBtn,
+#groupCancel2Btn {
+  background: #eee;
+  border-color: #ccc;
+  color: #333;
+}
+
+/* Step 2: info del grupo */
+.group-info {
+  padding: 20px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.group-avatar-placeholder {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 2px dashed var(--line);
+  display: grid;
+  place-items: center;
+  background: #f4f4f4;
+  cursor: pointer;
+}
+
+.group-avatar-placeholder img {
+  width: 60%;
+  height: 60%;
+  object-fit: contain;
+}
+
+
+#groupNameInput {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 2px solid var(--line);
+  font-size: 14px;
+}
+
+/* Check a la derecha de cada contacto en el modal de grupo */
+.group-contact {
+  position: relative;
+}
+
+.group-contact .group-check {
+  margin-left: auto;
+}
+
+.group-contact .group-check input {
+  width: 18px;
+  height: 18px;
+}
+
+/* Contenedor principal del modal de grupo */
+#newGroupModal .group-dialog {
+  max-height: 90vh;
+  width: 480px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* wrapper interior (título arriba, lista al medio, botones abajo) */
+#newGroupModal .group-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+
+/* footer con los botones “Cancelar / Siguiente / Crear” fijo abajo */
+#newGroupModal .group-footer {
+  padding-top: 8px;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+
+.group-info-sidebar button {
+  text-align: left;
+  padding: 10px 20px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.group-info-sidebar button.active {
+  background: #e0e6f2;
+  font-weight: 600;
+}
+
+.group-tab {
+  display: none;
+}
+
+.group-tab.active {
+  display: block;
+}
+
+
+
+/* menú contextual pequeño */
+#groupMemberContextMenu {
+  position: fixed;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.15);
+  padding: 4px 0;
+  z-index: 9999;
+  min-width: 190px;
+  display: none;
+  /* 👈 importantísimo */
+}
+
+#groupMemberContextMenu button {
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 8px 16px;
+  text-align: left;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+#groupMemberContextMenu button:hover:not(:disabled) {
+  background: #f2f4f7;
+}
+
+/* =========================================================
+   MODAL "NUEVO CHAT" — estilo tipo WhatsApp Web
+   ========================================================= */
+
+.new-chat-modal {
+  /* ya hereda de .modal (position: fixed, inset:0) */
+  display: none;
+  /* se activa por JS */
+  align-items: center;
+  /* centrado vertical */
+  justify-content: center;
+  /* centrado horizontal */
+  z-index: 120;
+  /* encima de otros modales normales */
+}
+
+.new-chat-card {
+  width: 420px;
+  max-width: 95vw;
+  max-height: 80vh;
+
+  display: flex;
+  flex-direction: column;
+
+  background: #ffffff;
+  color: var(--text);
+  border-radius: 16px;
+  border: 2px solid var(--line);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
+  overflow: hidden;
+}
+
+/* Header del modal (título + botón atrás) */
+.new-chat-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+}
+
+.new-chat-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.back-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 4px 8px;
+}
+
+/* Search bar dentro del modal */
+.search-container {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--line);
+  background: #f7f7f7;
+}
+
+.search-container input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 2px solid var(--line);
+  font-size: 14px;
+}
+
+/* Opción "Nuevo grupo" */
+.new-chat-options {
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--line);
+  background: #fafafa;
+}
+
+.new-chat-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 8px 0;
+}
+
+.new-chat-option:hover {
+  opacity: 0.9;
+}
+
+.icon-group {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--blue);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+}
+
+/* Lista de contactos desplazable */
+.new-chat-list {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #ffffff;
+}
+
+/* Cada contacto de la lista del modal "Nuevo chat" */
+.contact-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+  background: #fff;
+}
+
+.contact-item:hover {
+  background: #f3f3f3;
+}
+
+.contact-item .avatar {
+  margin-right: 12px;
+}
+
+.contact-item .avatar img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.contact-item .contact-info h4 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.contact-item .contact-info p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #666;
+}
+
+/* =========================================================
+   EXTRAS: filas de perfil, labels
+   ========================================================= */
+.row {
+  margin-top: 4px;
+  font-size: 14px;
+}
+
+.label {
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+/* =========================================================
+   Menú contextual de un chat (clic derecho)
+   ========================================================= */
+.context-menu {
+  position: absolute;
+  display: none;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
+  z-index: 250;
+  min-width: 190px;
+  padding: 4px 0;
+}
+
+.context-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.context-menu li {
+  padding: 8px 16px;
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.context-menu li:hover {
+  background: #f0f0f0;
+}
+
+
+/* =========================================================
+   Menú contextual de MENSAJES (clic derecho en un mensaje)
+   ========================================================= */
+.msg-context-menu {
+  position: absolute;
+  display: none;
+  flex-direction: column;
+  min-width: 210px;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, .18);
+  z-index: 260;
+  padding: 4px 0;
+}
+
+.msg-context-menu button {
+  width: 100%;
+  text-align: left;
+  padding: 8px 14px;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.msg-context-menu button:hover {
+  background: #f0f2f5;
+}
+
+.msg-context-menu hr {
+  border: none;
+  border-top: 1px solid #e3e5ea;
+  margin: 4px 0;
+}
+
+/* Fila de reacciones (👍 ❤️ 😂 😮 😢 🙏 +) */
+.msg-reactions-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px 8px;
+  border-top: 1px solid #e3e5ea;
+}
+
+.msg-reactions-row span {
+  cursor: pointer;
+  font-size: 18px;
+  transition: transform 0.12s ease;
+}
+
+.msg-reactions-row span:hover {
+  transform: scale(1.15);
+}
+
+
+/* =========================================================
+   Modales pequeños de confirmación (vaciar / eliminar chat)
+   ========================================================= */
+.small-confirm {
+  width: 360px;
+  max-width: 90vw;
+}
+
+.small-confirm h3 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 18px;
+}
+
+.small-confirm p {
+  margin: 0 0 16px 0;
+  font-size: 14px;
+}
+
+/* Botones genéricos dentro de modales */
+.botones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.botones button {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Botón "Cancelar" reutilizable */
+.cancelar {
+  background: #eee;
+  border-color: #ccc;
+  color: #333;
+}
+
+/* Botón "Peligro" (eliminar / vaciar) */
+.danger {
+  background: #d94b4b;
+  border-color: #b33d3d;
+  color: #fff;
+}
+
+/* =========================================================
+   Tarjetas de error / éxito (modales)
+   ========================================================= */
+.error-card,
+.success-card {
+  width: 320px;
+  max-width: 90vw;
+  background: #fff;
+  color: var(--text);
+  border-radius: 16px;
+  border: 2px solid var(--line);
+  padding: 18px;
+  text-align: center;
+}
+
+.error-card h3,
+.success-card h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
+.error-card button,
+.success-card button {
+  margin-top: 10px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 2px solid var(--blue);
+  background: var(--blue);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* =========================================================
+   Toast de notificación
+   ========================================================= */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  min-width: 200px;
+  max-width: 320px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  font-size: 14px;
+  display: none;
+  /* se muestra por JS */
+  z-index: 500;
+}
+
+.msg-system {
+  background: #fbe9c5;
+  color: #5b3e1c;
+  padding: 8px 14px;
+  border-radius: 10px;
+  margin: 12px auto;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  max-width: 65%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* =========================================================
+   🔥 FIX DEFINITIVO – MODAL INFO DE GRUPO
+   ========================================================= */
+
+/* Overlay oscuro que cubre toda la pantalla */
+#groupInfoOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.25);
+
+  /* SIEMPRE FLEX */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* El JS controla visibilidad */
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity .20s ease;
+
+  z-index: 500;
+}
+
+/* Cuando está abierto (JS añade esta clase) */
+#groupInfoOverlay.visible {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Modal centrado */
+#groupInfoModal {
+  width: 720px;
+  max-width: 90%;
+  max-height: 80vh;
+  background: #ffffff;
+
+  border-radius: 16px;
+  border: 2px solid var(--line);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
+
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+
+  /* ⬅️ FIX MÁS IMPORTANTE  
+     Evita que se deforme o crezca inesperado */
+  box-sizing: border-box;
+}
+
+/* Sidebar lateral */
+.group-info-sidebar {
+  width: 190px;
+  background: #f3f4f7;
+  padding: 16px 0;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #d6d9de;
+}
+
+.group-info-sidebar button {
+  padding: 12px 20px;
+  text-align: left;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.group-info-sidebar button.active {
+  background: #e0e6f2;
+  font-weight: 600;
+}
+
+/* Panel derecho */
+.group-info-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden !important;
+  padding: 20px 24px;
+}
+
+/* Tabs (ocultos por defecto) */
+.group-tab {
+  display: none;
+}
+
+.group-tab.active {
+  display: block;
+}
+
+/* Cabecera del resumen */
+.group-summary {
+  text-align: center;
+}
+
+/* Fix definitivo al contenedor del avatar grande del grupo */
+.group-avatar-big {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 10px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+  border: 3px solid var(--line);
+}
+
+
+#groupInfoName {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+#groupInfoCount {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* Lista de miembros */
+#groupMembersList .group-member {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-radius: 8px;
+  transition: background .15s;
+}
+
+#groupMembersList .group-member:hover {
+  background: #f2f4f7;
+}
+
+.group-member .avatar img {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.group-member-info {
+  margin-left: 12px;
+  flex: 1;
+}
+
+.group-member-name {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.group-member-phone {
+  font-size: 12px;
+  color: #666;
+}
+
+.group-member-role {
+  font-size: 12px;
+  color: #0b6efb;
+}
+
+/* =========================================================
+   📁 ARCHIVOS MODERNOS (WHATSAPP WEB)
+   ========================================================= */
+
+/* Contenedor de archivos */
+.msg-file-box {
+  max-width: 280px;
+  background: #ffffff;
+  padding: 12px;
+  border-radius: 12px;
+  border: 2px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ----------- IMÁGENES ----------- */
+.msg-img-modern {
+  max-width: 260px;
+  max-height: 260px;
+  border-radius: 10px;
+  object-fit: cover;
+  display: block;
+  background: #f2f3f5;
+}
+
+/* ----------- VIDEO ----------- */
+.msg-video-modern {
+  width: 260px;
+  max-height: 260px;
+  border-radius: 12px;
+  outline: none;
+}
+
+/* ----------- AUDIO ----------- */
+.msg-audio-modern {
+  width: 100%;
+}
+
+/* ----------- DOCUMENTOS ----------- */
+.msg-doc-modern {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  border-radius: 12px;
+}
+
+.doc-icon-modern {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+
+.doc-name-modern {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  max-width: 170px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.doc-open-modern {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--blue);
+  text-decoration: none;
+  margin-top: 4px;
+}
+
+/* ----------- TEXTO MODERNO ----------- */
+.msg-text-modern {
+  margin-top: 6px;
+  font-size: 15px;
+  line-height: 1.35;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* ----------- FOOTER (hora + ticks) ----------- */
+.msg-footer-modern {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  font-size: 12px;
+  color: #888;
+}
+
+/* ============================
+   📞 MODAL DE LLAMADA HERMOSO
+   ============================ */
+
+.call-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(3px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.call-modal.hidden {
+  display: none;
+}
+
+.call-modal-content {
+  background: #fff;
+  width: 320px;
+  padding: 25px;
+  border-radius: 20px;
+  text-align: center;
+  animation: popIn 0.3s ease;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+@keyframes popIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+.call-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #3F80C7;
+  margin-bottom: 15px;
+}
+
+.call-textos h2 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.call-textos p {
+  color: #666;
+  margin-top: 5px;
+  font-size: 16px;
+}
+
+.call-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.btn-reject, .btn-accept {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  font-size: 26px;
+  border: none;
+  cursor: pointer;
+  color: white;
+  transition: transform .2s ease;
+}
+
+.btn-reject {
+  background: #FF3B30;
+}
+
+.btn-accept {
+  background: #4CD964;
+}
+
+.btn-reject:hover, .btn-accept:hover {
+  transform: scale(1.1);
+}
+

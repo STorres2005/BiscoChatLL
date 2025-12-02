@@ -1,0 +1,138 @@
+:root {
+  --bg: #f7f0e3;
+  --panel: #ffffff;
+  --text: #242a35;
+  --muted: #6c757d;
+  --border: #242a35;
+  --accent: #4ea1ff;
+  --button-bg: #ff9f00;
+  --button-hover: #e68900;
+  --button-text: #ffffff;
+}
+
+/* ===== Reset general ===== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg);
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  color: var(--text);
+}
+
+/* ===== Tarjeta principal ===== */
+.qr-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  padding: 2.2rem 2.5rem;
+  width: 100%;
+  max-width: 380px;
+  animation: fadeIn 0.8s ease;
+}
+
+/* ===== Logo dentro ===== */
+.logo-inside img {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background-color: var(--panel);
+  object-fit: cover;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+  animation: fadeIn 1s ease;
+}
+
+/* ===== Títulos ===== */
+.qr-card h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+  color: var(--text);
+}
+
+/* ===== Texto secundario ===== */
+.qr-card p {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 1.2rem;
+}
+
+/* ===== Campos ===== */
+.input-box input {
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+  color: var(--text);
+  text-align: center;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.input-box input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+/* ===== Botones ===== */
+button {
+  width: 100%;
+  padding: 1rem;
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background-color: var(--button-hover);
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+/* ===== Mensaje inferior ===== */
+#message-area {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* ===== Animación ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 500px) {
+  .qr-card {
+    padding: 1.5rem;
+  }
+
+  .logo-inside img {
+    width: 70px;
+    height: 70px;
+  }
+}

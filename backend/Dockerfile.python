@@ -1,0 +1,73 @@
+# backend/Dockerfile.python
+FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    TZ=America/Guayaquil \
+    PYTHONPATH=/app \
+    ALEMBIC_CONFIG=alembic.ini
+
+# =========================================================
+# 🔹 Instalar dependencias del sistema
+# =========================================================
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    curl \
+    netcat-traditional \
+    tzdata \
+ && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# =========================================================
+# 🔹 Copiar el código fuente
+# =========================================================
+COPY . /app
+
+# =========================================================
+# 🔹 Instalar dependencias Python
+# =========================================================
+RUN set -eux; \
+    python -m pip install --upgrade pip setuptools wheel; \
+    if [ -f requirements.txt ]; then pip install --no-cache-dir -r requirements.txt; fi; \
+    pip install --no-cache-dir \
+      fastapi \
+      starlette \
+      "pydantic>=2" \
+      pydantic-settings \
+      typing-extensions \
+      "uvicorn[standard]" \
+      gunicorn \
+      orjson \
+      jinja2 \
+      sqlalchemy \
+      alembic \
+      "psycopg[binary]" \
+      asyncpg \
+      PyJWT \
+      "passlib[bcrypt]" \
+      bcrypt \
+      python-multipart \
+      websockets \
+      httpx \
+      aiofiles \
+      python-dotenv \
+      email-validator \
+      loguru \
+      "python-jose[cryptography]" \
+      qrcode[pil] \
+      pillow
+
+# =========================================================
+# 🔹 Crear usuario no-root
+# =========================================================
+RUN useradd -m appuser && chown -R appuser:appuser /app
+USER appuser
+
+EXPOSE 8000
+
+# =========================================================
+# 🔹 Comando de arranque
+# =========================================================
+CMD ["sh","-lc","python -m alembic upgrade head && gunicorn -k uvicorn.workers.UvicornWorker -c gunicorn_conf.py app.main:app"]

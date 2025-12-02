@@ -1,0 +1,139 @@
+:root {
+  --bg: #f7f0e3;
+  --panel: #ffffff;
+  --border: #242a35;
+  --text: #242a35;
+  --muted: #6c757d;
+  --accent: #4ea1ff;
+  --button-bg: #ff9f00;
+  --button-hover: #e68900;
+  --button-text: #ffffff;
+}
+
+/* ===== Reset general ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg);
+  font-family: 'Inter', sans-serif;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 1rem;
+}
+
+/* ===== Tarjeta principal ===== */
+.qr-card {
+  background: var(--panel);
+  border: 2px solid var(--border);
+  border-radius: 18px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  padding: 2rem;
+  width: 100%;
+  max-width: 350px;
+  animation: fadeIn 0.8s ease;
+}
+
+/* ===== Logo centrado dentro del recuadro ===== */
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.logo-img {
+  max-width: 70px;   /* 🔹 Fuerza el límite real del tamaño */
+  max-height: 70px;
+  width: auto;
+  height: auto;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background-color: var(--panel);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  object-fit: contain;
+}
+
+/* ===== Títulos ===== */
+.qr-card h1 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.75rem;
+}
+
+.qr-card p {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-bottom: 1.3rem;
+}
+
+/* ===== Cuadro del QR ===== */
+.qr-box {
+  width: 200px;
+  height: 200px;
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 1.2rem auto;
+  background: #fff;
+  overflow: hidden;
+}
+
+.qr-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* ===== Texto del estado ===== */
+.status-text {
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* ===== Footer ===== */
+footer {
+  margin-top: 1.5rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* ===== Animación ===== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 500px) {
+  .qr-card {
+    padding: 1.5rem;
+  }
+
+  .logo-img {
+    max-width: 55px;
+    max-height: 55px;
+  }
+
+  .qr-box {
+    width: 170px;
+    height: 170px;
+  }
+
+  .qr-card h1 {
+    font-size: 1.2rem;
+  }
+}

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Llamada grupal - BiscoChat</title>
+
+  <link rel="stylesheet" href="../css/llamada_grupal_audio.css" />
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="title">📞 Llamada grupal</div>
+    <div class="time" id="callTime">00:00</div>
+  </header>
+
+  <!-- LISTA DE PARTICIPANTES -->
+  <section class="call-area" id="participantsContainer">
+    <!-- Se llenará dinámicamente -->
+  </section>
+
+  <!-- CONTROLES -->
+  <footer class="controls">
+
+    <div class="control">
+      <button class="btn-circle" id="btnMic" aria-pressed="true">
+        <img src="../assets/voz.png" alt="">
+      </button>
+      <div class="label" id="lblMic">Mic encendido</div>
+    </div>
+
+    <div class="control">
+      <button class="btn-circle" id="btnSpk" aria-pressed="true">
+        <img src="../assets/llamar.png" alt="">
+      </button>
+      <div class="label" id="lblSpk">Altavoz</div>
+    </div>
+
+    <div class="control">
+      <button class="btn-circle btn-red" id="btnHang">
+        <img style="transform: rotate(135deg);" src="../assets/llamar.png" alt="">
+      </button>
+      <div class="label">Colgar</div>
+    </div>
+
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script src="../js/socket.io.min.js"></script>
+  <script src="../js/llamada_grupal_audio.js"></script>
+
+</body>
+</html>

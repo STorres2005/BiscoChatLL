@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BiscoChat - Inicia sesión con QR</title>
+
+  <!-- ✅ Estilos seguros -->
+  <link rel="stylesheet" href="../css/login_qr.css?v=2" /> <!-- 👈 fuerza recarga del CSS -->
+</head>
+
+<body>
+  <div class="qr-card">
+    <!-- 🔹 Logo centrado -->
+    <div class="logo-container">
+      <img 
+        src="../assets/Logo_biscoChat.png" 
+        alt="Logo BiscoChat" 
+        class="logo-img"
+      />
+    </div>
+
+    <h1>Inicia sesión en BiscoChat</h1>
+    <p>Escanea el código QR con tu teléfono para continuar</p>
+
+    <div class="qr-box">
+      <img id="qr-image" src="" alt="Código QR" />
+    </div>
+
+    <p id="status-message" class="status-text">Generando QR...</p>
+  </div>
+
+  <footer>© 2025 BiscoChat by LLTY</footer>
+
+  <!-- ✅ Script local -->
+  <script src="../js/login_qr.js"></script>
+</body>
+</html>

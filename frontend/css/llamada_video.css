@@ -1,0 +1,110 @@
+:root {
+  --bg: #000000;
+  --text: #ffffff;
+  --panel: rgba(0, 0, 0, 0.4);
+  --accent: #4ea1ff;
+  --border: #333;
+  --btn: #ff9f00;
+  --btn-red: #ff3b3b;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* HEADER */
+header {
+  background: var(--panel);
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  backdrop-filter: blur(4px);
+}
+
+header .time {
+  font-family: monospace;
+  color: var(--accent);
+}
+
+/* ÁREA DE VIDEO */
+.call-area {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.remote-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.local-video {
+  position: absolute;
+  width: 140px;
+  height: 180px;
+  right: 15px;
+  bottom: 15px;
+  border-radius: 12px;
+  border: 2px solid var(--accent);
+  object-fit: cover;
+}
+
+/* INFO CONTACTO */
+.contact-info {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: var(--panel);
+  padding: .8rem 1rem;
+  border-radius: 10px;
+  backdrop-filter: blur(6px);
+}
+
+/* CONTROLES */
+.controls {
+  background: var(--panel);
+  padding: .7rem;
+  display: flex;
+  justify-content: space-around;
+  border-top: 1px solid var(--border);
+}
+
+.control {
+  text-align: center;
+}
+
+.btn-circle {
+  width: 70px;
+  height: 70px;
+  background: var(--btn);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-red {
+  background: var(--btn-red);
+}
+
+.btn-circle img {
+  width: 35px;
+}
+
+.label {
+  margin-top: .3rem;
+  font-size: 0.8rem;
+  color: #eaeaea;
+}

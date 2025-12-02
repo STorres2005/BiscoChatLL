@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Videollamada - BiscoChat</title>
+
+  <link rel="stylesheet" href="../css/llamada_video.css">
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="title">📹 Videollamada</div>
+    <div class="time" id="callTime">00:00</div>
+  </header>
+
+  <!-- ÁREA DE VIDEO -->
+  <section class="call-area">
+
+    <!-- VIDEO REMOTO -->
+    <video id="remoteVideo" class="remote-video" autoplay playsinline></video>
+
+    <!-- VIDEO LOCAL MINI -->
+    <video id="localVideo" class="local-video" autoplay muted playsinline></video>
+
+    <!-- Info del contacto -->
+    <div class="contact-info">
+      <div id="contactName">Contacto</div>
+      <div id="callState">Conectando...</div>
+    </div>
+
+  </section>
+
+  <!-- CONTROLES -->
+  <footer class="controls">
+
+    <div class="control">
+      <button class="btn-circle" id="btnMic" aria-pressed="true">
+        <img src="../assets/voz.png">
+      </button>
+      <div class="label" id="lblMic">Mic encendido</div>
+    </div>
+
+    <div class="control">
+      <button class="btn-circle" id="btnCam" aria-pressed="true">
+        <img id="iconCam" src="../assets/camara_activada.png">
+      </button>
+      <div class="label" id="lblCam">Cámara encendida</div>
+    </div>
+
+    <div class="control">
+      <button class="btn-circle" id="btnSpk" aria-pressed="true">
+        <img src="../assets/llamar.png">
+      </button>
+      <div class="label" id="lblSpk">Altavoz</div>
+    </div>
+
+    <div class="control">
+      <button class="btn-circle btn-red" id="btnHang">
+        <img style="transform: rotate(135deg);" src="../assets/llamar.png">
+      </button>
+      <div class="label">Colgar</div>
+    </div>
+
+  </footer>
+
+  <!-- LIBRERÍAS -->
+  <script src="../js/socket.io.min.js"></script>
+  <script src="../js/llamada_video.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="BiscoChat: sistema de mensajería con autenticación QR y chat en tiempo real." />
+  <meta name="theme-color" content="#3F80C7" />
+
+  <title>BiscoChat - Conversaciones</title>
+  <link rel="icon" type="image/png" href="../assets/Logo_biscoChat.png" />
+  <link rel="stylesheet" href="../css/conversaciones.css" />
+
+  <!-- Metadatos inyectados desde FastAPI -->
+  <meta id="meta-usuario-id" content="{{ usuario.id }}">
+  <meta id="meta-usuario-nombre" content="{{ usuario.nombre }}">
+  <meta id="meta-usuario-telefono" content="{{ usuario.telefono }}">
+</head>
+
+<body>
+  <div class="app">
+    <!-- RAIL LATERAL -->
+    <aside class="rail">
+      <div class="logo">
+        <img src="../assets/Logo_biscoChat.png" alt="Logo" />
+      </div>
+
+      <button class="icon-btn" data-action="mensajes" title="Mensajes">
+        <img src="../assets/mensajes.png" alt="Mensajes" />
+      </button>
+
+      <button class="icon-btn" data-action="llamadas" title="Llamadas">
+        <img src="../assets/llamar.png" alt="Llamadas" />
+      </button>
+
+      <!-- 👇 aquí va el botón AJUSTES con id para JS -->
+      <button class="icon-btn" data-action="ajustes" title="Ajustes" id="btnAjustes">
+        <img src="../assets/ajustes.png" alt="Ajustes" />
+      </button>
+
+      <!-- Botón MÁS (menú de contacto / nuevo chat) -->
+      <button class="icon-btn" id="btnMas" title="Más">
+        <img src="../assets/mas.png" alt="Más" />
+      </button>
+
+      <!-- Menú contextual (para botón MÁS) -->
+      <div class="menu-mas" id="menuMas">
+        <ul>
+          <li id="btnAddContact">➕ Añadir contacto</li>
+          <li id="btnNewChat">👥 Nuevo Chat</li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Menú contextual (para botón AJUSTES → Perfil) -->
+    <div class="menu-mas" id="menuAjustes">
+      <ul>
+        <li id="btnPerfil">👤 Perfil</li>
+      </ul>
+    </div>
+
+    <!-- Topbar -->
+    <header class="topbar" id="topbarTitle">BiscoChat</header>
+
+    <!-- Lista de chats -->
+    <section class="list">
+      <div class="search">
+        <input id="searchInput" type="text" placeholder="Buscar chats..." />
+      </div>
+      <div class="threads" id="threads"></div>
+    </section>
+
+    <!-- CHAT PRINCIPAL -->
+    <section class="chat">
+
+      <!-- HEADER -->
+      <div class="chat-header" id="chatHeader">
+
+        <div class="avatar" id="userAvatarBtn">
+          <img id="chatAvatar" src="../assets/usuario_gato.png" alt="Avatar" />
+        </div>
+
+        <div class="user-info" id="chatHeaderCenter">
+          <div class="name" id="chatName"></div>
+          <div class="status" id="groupSubtitle"></div>
+          <div class="status" id="chatStatus"></div>
+        </div>
+
+        <button class="circle-btn add-members" id="btnAddMembers" title="Agregar miembros">
+          <img src="../assets/agregar_miembros.png" alt="Agregar miembros" />
+        </button>
+
+        <div class="chat-actions">
+          <button class="circle-btn video-call" id="btnVideoCall" title="Videollamar">
+            <img src="../assets/video_llamada.png" alt="Videollamar" />
+          </button>
+
+          <button class="circle-btn call" id="btnCall" title="Llamar">
+            <img src="../assets/llamar.png" alt="Llamar" />
+          </button>
+        </div>
+
+      </div> <!-- FIN HEADER -->
+
+      <!-- MENSAJES -->
+      <div class="messages" id="messages"></div>
+
+      <!-- BANNER SI YA NO ERES MIEMBRO -->
+      <div id="leftGroupBanner" style="
+        display:none;text-align:center;margin:10px 16px;padding:8px 10px;
+        border-radius:8px;background:#fbe4c8;color:#4a3520;font-size:13px;">
+        No puedes enviar mensajes a este grupo porque ya no eres miembro.
+      </div>
+
+      <!-- RESPUESTA -->
+      <div class="reply-preview" id="replyPreview" style="display:none;">
+        <div class="reply-bar"></div>
+        <div class="reply-texts">
+          <div class="reply-title" id="replyTitle">Tú</div>
+          <div class="reply-snippet" id="replySnippet"></div>
+        </div>
+        <button class="reply-close" id="replyCloseBtn">✕</button>
+      </div>
+
+      <!-- COMPOSER -->
+      <div class="composer">
+        <button class="circle-btn" id="btnEmoji"><img src="../assets/emoji.png"></button>
+        <input id="composerInput" type="text" placeholder="Escriba un mensaje" />
+        <button class="circle-btn" id="btnAdjuntos"><img src="../assets/adjuntos.png"></button>
+        <button class="circle-btn" id="btnEnviar"><img src="../assets/enviar_mensaje.png"></button>
+        <button class="circle-btn" id="btnVoz"><img src="../assets/voz.png"></button>
+      </div>
+
+    </section>
+  </div> <!-- FIN .app -->
+
+  <!-- Menú contextual de un chat (clic derecho en la tarjeta) -->
+  <div id="threadContextMenu" class="context-menu">
+    <ul>
+
+      <!-- Chat 1 a 1: aparece "Vaciar chat" -->
+      <li id="ctxVaciarChat">🧹 Vaciar chat</li>
+
+      <!-- Grupo: aparece "Eliminar mensajes" -->
+      <li id="ctxEliminarMensajes">🧹 Eliminar mensajes</li>
+
+      <!-- Grupo cuando eres miembro -->
+      <li id="ctxSalirGrupo">🚪 Salir del grupo</li>
+
+      <!-- Grupo cuando YA saliste / chat normal -->
+      <li id="ctxEliminarChat">🗑️ Eliminar chat</li>
+
+    </ul>
+  </div>
+
+  <!-- ============================
+     MODAL: AGREGAR MIEMBROS
+============================= -->
+  <div class="modal-overlay" id="addMembersOverlay"></div>
+
+  <div class="modal new-chat-modal" id="addMembersModal">
+    <div class="new-chat-card">
+
+      <div class="new-chat-header">
+        <button class="back-btn" id="backFromAddMembers">←</button>
+        <h3>Agregar miembros</h3>
+      </div>
+
+      <div class="search-container">
+        <input type="text" id="searchAddMembers" placeholder="Buscar contacto..." autocomplete="off" />
+      </div>
+
+      <div class="new-chat-list" id="addMembersList">
+        <div style="text-align:center;padding:40px;color:gray;font-style:italic;">
+          Cargando contactos...
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- Modal de perfil -->
+  <div class="modal-overlay" id="profileOverlay"></div>
+  <div class="modal" id="profileModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="big-avatar">
+          <img src="../assets/usuario_gato.png" alt="Avatar del usuario" />
+        </div>
+        <div>
+          <div class="profile-name" id="profileName">Usuario</div>
+          <div class="row">
+            <span class="label">Teléfono:</span>
+            <span id="profilePhone"></span>
+          </div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <button class="logout" id="btnLogout">Cerrar sesión</button>
+    </div>
+  </div>
+
+  <!-- Modal para añadir contacto -->
+  <div class="modal-overlay" id="addContactOverlay"></div>
+  <div class="modal" id="addContactModal">
+    <div class="modal-card">
+      <h3>Añadir contacto</h3>
+      <input type="tel" id="newContactPhone" placeholder="Número de teléfono" />
+      <input type="text" id="newContactAlias" placeholder="Alias (ej: Juan Trabajo)" />
+
+      <div class="botones">
+        <button id="saveContactBtn">Guardar</button>
+        <button id="cancelContactBtn" class="cancelar">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================
+      MENÚ CONTEXTUAL MENSAJE
+  ========================= -->
+  <div id="msgContextMenu" class="msg-context-menu">
+    <button data-action="reply">Responder</button>
+    <button data-action="copy">Copiar</button>
+    <button data-action="edit">Editar</button>
+    <button data-action="delete">Eliminar</button>
+
+    <div class="msg-reactions-row">
+      <span>👍</span>
+      <span>❤️</span>
+      <span>😂</span>
+      <span>😮</span>
+      <span>😢</span>
+      <span>🙏</span>
+      <span>+</span>
+    </div>
+  </div>
+
+  <!-- =========================
+      MODAL ELIMINAR MENSAJE
+  ========================= -->
+  <div id="deleteMsgOverlay" class="modal-overlay">
+    <div id="deleteMsgModal" class="delete-msg-card">
+      <h3>¿Deseas eliminar este mensaje?</h3>
+      <p>Puedes eliminar mensajes para todos o solo para ti.</p>
+
+      <label class="radio-row">
+        <input type="radio" name="msgDeleteMode" value="para_mi" />
+        <span>Eliminar para mí</span>
+      </label>
+
+      <label class="radio-row" id="rowEliminarParaTodos">
+        <input type="radio" name="msgDeleteMode" value="para_todos" />
+        <span>Eliminar para todos</span>
+      </label>
+
+      <div class="modal-actions">
+        <button id="btnConfirmDeleteMsg" class="btn-primary" disabled>Eliminar</button>
+        <button id="btnCancelDeleteMsg" class="btn-secondary">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Modal de error -->
+  <div class="modal-overlay" id="errorOverlay"></div>
+  <div class="modal" id="errorModal">
+    <div class="error-card">
+      <h3><strong>Error</strong></h3>
+      <p id="errorMessage">Ocurrió un problema.</p>
+      <button id="closeErrorBtn">Cerrar</button>
+    </div>
+  </div>
+
+  <!-- Modal de Éxito -->
+  <div class="modal-overlay" id="successOverlay"></div>
+  <div class="modal" id="successModal">
+    <div class="success-card">
+      <h3><strong>Éxito</strong></h3>
+      <p id="successMessage">Contacto guardado con éxito.</p>
+      <button id="closeSuccessBtn">Aceptar</button>
+    </div>
+  </div>
+
+  <!-- ===============================
+     MODAL INFO DE GRUPO (CORRECTO)
+================================= -->
+  <div id="groupInfoOverlay" class="overlay">
+    <div id="groupInfoModal" class="group-info-modal">
+
+      <div class="group-info-sidebar">
+        <button data-tab="resumen" class="active">Resumen</button>
+        <button data-tab="miembros">Miembros</button>
+        <button data-tab="multimedia" disabled>Multimedia</button>
+        <button data-tab="archivos" disabled>Archivos</button>
+      </div>
+
+      <div class="group-info-content">
+
+        <!-- TAB RESUMEN -->
+        <div id="groupTabResumen" class="group-tab active">
+          <div class="group-summary">
+            <div class="group-avatar-big">
+              <img src="../assets/grupo_icono.png" alt="Grupo">
+            </div>
+            <h2 id="groupInfoName"></h2>
+            <p id="groupInfoCount"></p>
+          </div>
+        </div>
+
+        <!-- TAB MIEMBROS -->
+        <div id="groupTabMiembros" class="group-tab">
+          <div id="groupMembersList"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- Menú contextual para miembros -->
+  <div id="groupMemberContextMenu" class="context-menu" style="display:none;">
+    <button data-action="open-chat">Abrir conversación</button>
+    <button data-action="remove" id="btnRemoveMember">Eliminar del grupo</button>
+  </div>
+
+  <!-- MODAL NUEVO CHAT (como WhatsApp) -->
+  <div class="modal-overlay" id="newChatOverlay"></div>
+  <div class="modal new-chat-modal" id="newChatModal">
+    <div class="new-chat-card">
+      <div class="new-chat-header">
+        <button class="back-btn" id="backFromNewChat">←</button>
+        <h3>Nuevo chat</h3>
+      </div>
+
+      <div class="search-container">
+        <input type="text" id="searchNewChat" placeholder="Buscar un nombre o número" autocomplete="off" />
+      </div>
+
+      <div class="new-chat-options">
+        <div class="new-chat-option" id="btnNewGroup">
+          <div class="icon-group">Grupo</div>
+          <div>Nuevo grupo</div>
+        </div>
+      </div>
+
+      <div class="new-chat-list" id="newChatList">
+        <div style="text-align:center;padding:40px;color:gray;font-style:italic;">
+          Cargando contactos...
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL NUEVO GRUPO -->
+  <div class="modal new-group-modal" id="newGroupModal">
+    <div class="new-group-card">
+      <!-- STEP 1: seleccionar contactos -->
+      <div class="group-step" id="groupStep1">
+        <div class="new-chat-header">
+          <button class="back-btn" id="backFromNewGroup">←</button>
+          <h3>Nuevo grupo</h3>
+        </div>
+
+        <div class="search-container">
+          <input type="text" id="searchNewGroup" placeholder="Buscar" autocomplete="off" />
+        </div>
+
+        <!-- Barra de seleccionados (chips) -->
+        <div class="group-selected-bar" id="groupSelectedBar" style="display:none;"></div>
+
+        <!-- Lista de contactos con check -->
+        <div class="new-chat-list" id="newGroupList">
+          <div style="text-align:center;padding:40px;color:gray;font-style:italic;">
+            Cargando contactos...
+          </div>
+        </div>
+
+        <div class="group-footer">
+          <span id="groupCount">0 participantes</span>
+          <div class="group-footer-buttons">
+            <button id="groupNextBtn" disabled>Siguiente</button>
+            <button id="groupCancelBtn">Cancelar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: nombre del grupo -->
+      <div class="group-step" id="groupStep2" style="display:none;">
+        <div class="new-chat-header">
+          <button class="back-btn" id="backToStep1">←</button>
+          <h3>Nuevo grupo</h3>
+        </div>
+
+        <div class="group-info">
+          <!-- Por ahora sólo un círculo, luego aquí conectarás subida de imagen -->
+          <div class="group-avatar-placeholder" id="groupAvatarPlaceholder">
+            <img src="../assets/grupo_icono.png" alt="Grupo" />
+          </div>
+          <input type="text" id="groupNameInput" placeholder="Nombre del grupo" autocomplete="off" />
+        </div>
+
+        <div class="group-footer">
+          <div class="group-footer-buttons">
+            <button id="groupCreateBtn" disabled>Crear</button>
+            <button id="groupCancel2Btn">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal confirmar "vaciar chat" -->
+  <div class="modal-overlay" id="clearChatOverlay"></div>
+  <div class="modal" id="clearChatModal">
+    <div class="modal-card small-confirm">
+      <h3>¿Deseas vaciar este chat?</h3>
+      <p>Se eliminarán todos los mensajes de esta conversación.</p>
+      <div class="botones">
+        <button id="confirmClearChat" class="danger">Vaciar</button>
+        <button id="cancelClearChat" class="cancelar">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal confirmar "eliminar chat" -->
+  <div class="modal-overlay" id="deleteChatOverlay"></div>
+  <div class="modal" id="deleteChatModal">
+    <div class="modal-card small-confirm">
+      <h3>¿Deseas eliminar este chat?</h3>
+      <p>Se eliminará la conversación de tu lista de chats.</p>
+      <div class="botones">
+        <button id="confirmDeleteChat" class="danger">Eliminar</button>
+        <button id="cancelDeleteChat" class="cancelar">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal confirmar "salir del grupo" -->
+  <div class="modal-overlay" id="leaveGroupOverlay"></div>
+  <div class="modal" id="leaveGroupModal">
+    <div class="modal-card small-confirm">
+      <h3>¿Deseas salir del grupo "<span id="leaveGroupName"></span>"?</h3>
+      <p>Solo quienes administran el grupo recibirán una notificación de que abandonaste el chat grupal.</p>
+      <div class="botones">
+        <button id="confirmLeaveGroup" class="danger">Salir</button>
+        <button id="cancelLeaveGroup" class="cancelar">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    console.log("¿io existe antes del JS?", typeof io);
+  </script>
+
+  <!-- Toast de notificación -->
+  <div id="toast" class="toast"></div>
+  <!-- 🔊 AUDIO DE TIMBRE -->
+  <audio id="ringtone" loop>
+    <source src="../assets/llamada_tono.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- ============================
+       📞 MODAL DE LLAMADA ENTRANTE
+       ============================ -->
+  <div id="modalLlamada" class="call-modal hidden">
+    <div class="call-modal-content">
+
+      <img id="callFoto" class="call-avatar" src="../assets/usuario_gato.png">
+
+      <div class="call-textos">
+        <h2 id="callNombre">Nombre</h2>
+        <p id="callTipo">Llamada entrante...</p>
+      </div>
+
+      <div class="call-buttons">
+        <button id="btnRechazar" class="btn-reject">❌</button>
+        <button id="btnAceptar" class="btn-accept">📞</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- carga Socket.IO primero -->
+  <script src="../js/socket.io.min.js"></script>
+
+  <!-- Script principal -->
+  <script src="../js/conversaciones.js" defer></script>
+</body>
+
+</html>

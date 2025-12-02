@@ -1,0 +1,206 @@
+# =======================================================
+# 🌐 SERVICIOS DEL PROYECTO WB (todo conectado a la nube)
+# =======================================================
+services:
+  # =======================================================
+  # BACKEND (FastAPI + Alembic + JWT)
+  # =======================================================
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.python
+    container_name: api
+    restart: unless-stopped
+
+    env_file:
+      - ./backend/.env
+
+    environment:
+      PYTHONUNBUFFERED: "1"
+      UVICORN_WORKERS: "4"
+      TZ: "America/Guayaquil"
+
+    depends_on:
+      redis:
+        condition: service_started
+      whatsapp:
+        condition: service_healthy
+
+    ports:
+      - "8000:8000"
+
+    command: >
+      bash -c "
+        echo 'Esperando conexión a Neon...';
+        sleep 5;
+        echo 'Ejecutando migraciones Alembic en Neon...';
+        alembic upgrade head || echo 'Error en migraciones (continuando de todos modos)';
+        echo 'Iniciando FastAPI...';
+        uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+      "
+
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8000/healthz || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+    volumes:
+      - ./backend/app:/app/app
+      - ./frontend:/frontend
+
+    networks:
+      - backend_network
+
+    # AÑADIDO: DNS PÚBLICOS PARA RESOLVER NEON SIN PROBLEMAS
+    dns:
+      - 8.8.8.8   # Google DNS
+      - 1.1.1.1   # Cloudflare DNS
+
+  # =======================================================
+  # 💬 SERVICIO NODE (WhatsApp Web JS)
+  # =======================================================
+  whatsapp:
+    build:
+      context: ./whatsapp-service
+      dockerfile: Dockerfile.node
+    container_name: whatsapp
+    restart: unless-stopped
+    user: "node"
+
+    environment:
+      PORT: 3001
+      TZ: America/Guayaquil
+
+      # ⚙️ Chromium directo del sistema (Dockerfile.node)
+      PUPPETEER_EXECUTABLE_PATH: /usr/bin/chromium
+      PUPPETEER_SKIP_DOWNLOAD: "true"
+      PUPPETEER_DISABLE_SANDBOX: "true"
+      CHROME_PATH: /usr/bin/chromium
+
+      # 📁 Carpeta temporal para perfiles y sesiones
+      TMP_DIR: /tmp
+      PUPPETEER_PROFILE_DIR: /usr/src/app/chrome-profile
+
+    shm_size: "2gb"
+
+    volumes:
+      - type: volume
+        source: whatsapp_data
+        target: /usr/src/app/.wwebjs_auth
+      - type: volume
+        source: whatsapp_profile
+        target: /usr/src/app/chrome-profile
+
+    ports:
+      - "3001:3001"
+
+    # 🚀 Inicia Puppeteer sin sandbox (seguro en contenedores)
+    command: >
+      bash -c "
+        echo '🚀 Iniciando servicio WhatsApp Web JS...';
+        npm start
+      "
+
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:3001/health || exit 1"]
+      interval: 20s
+      timeout: 8s
+      retries: 8
+      start_period: 60s
+
+    networks:
+      - backend_network
+
+  # =======================================================
+  # ⚙️ REDIS (solo como fallback local, usa Upstash remoto)
+  # =======================================================
+  redis:
+    image: redis:7
+    container_name: redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    networks:
+      - backend_network
+
+  # =======================================================
+  # 🧠 PGADMIN (para inspeccionar la base Neon manualmente)
+  # =======================================================
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      TZ: "America/Guayaquil"
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - backend_network
+
+  # =======================================================
+  # BACKUP AUTOMÁTICO DESDE NEON (cada 24h)
+  # =======================================================
+  backup:
+    image: postgres:16
+    container_name: pgbackup
+    env_file:
+      - ./backend/.env
+    environment:
+      TZ: "America/Guayaquil"
+      PGSSLMODE: require
+    volumes:
+      - ./backend/backups:/backups
+    entrypoint: >
+      bash -c '
+        echo "Iniciando backup automático desde Neon...";
+        mkdir -p /backups;
+        while true; do
+          BACKUP_FILE="/backups/backup_$$(date +%%F_%%H-%%M).dump";
+          echo "Conectando a Neon...";
+          echo "Guardando en: $$BACKUP_FILE";
+
+          pg_dump \
+            -h "$$PGHOST" \
+            -p "$$PGPORT" \
+            -U "$$PGUSER" \
+            -d "$$PGDATABASE" \
+            -F c \
+            -Z 9 \
+            -v \
+            -f "$$BACKUP_FILE" \
+            --no-password;
+
+          if [ $$? -eq 0 ]; then
+            echo "Copia completada: $$(basename $$BACKUP_FILE)";
+          else
+            echo "Error en backup. Reintentando en 1 hora...";
+            sleep 3600;
+            continue;
+          fi;
+
+          echo "Próximo backup en 24 horas...";
+          sleep 86400;
+        done
+      '
+    networks:
+      - backend_network
+    restart: unless-stopped
+
+# =======================================================
+# 🌐 REDES Y VOLUMENES
+# =======================================================
+networks:
+  backend_network:
+    driver: bridge
+
+volumes:
+  pgadmin_data:
+  whatsapp_data:
+  whatsapp_profile:

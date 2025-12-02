@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>¡Escaneo Exitoso!</title>
+
+  <!-- ✅ Tailwind CSS y Fuente -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- ✅ CSS Personalizado -->
+  <link rel="stylesheet" href="../css/qr_escaneo_exitoso.css">
+</head>
+
+<body class="flex items-center justify-center min-h-screen p-4 font-[Inter] bg-[#f7f0e3]">
+
+  <div class="relative">
+    <!-- 🔹 Logo flotante -->
+    <div class="absolute left-1/2 -translate-x-1/2 -top-10 animate-fadeIn">
+      <img 
+        src="../assets/Logo_biscoChat.png" 
+        alt="Logo BiscoChat"
+        class="w-20 h-20 rounded-full border-2 border-gray-800 shadow-md object-cover bg-white"
+      />
+    </div>
+
+    <!-- 🔹 Tarjeta principal -->
+    <div class="qr-card text-center bg-white shadow-lg rounded-2xl p-8 border border-gray-800 max-w-sm w-full animate-fadeIn">
+      <!-- ✅ Ícono de check -->
+      <div class="circle mb-6 flex justify-center mt-10">
+        <svg class="checkmark text-amber-500 w-16 h-16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+
+      <h1 class="text-2xl font-bold mb-2 text-gray-800">¡Escaneo Exitoso!</h1>
+
+      <!-- 🔹 Mensaje dinámico desde backend -->
+      <p id="mensaje-texto" class="text-gray-700 mb-3 font-medium">
+        {% if mensaje %}
+          {{ mensaje }}
+        {% else %}
+          Bienvenido de nuevo. Tu sesión se ha iniciado correctamente.
+        {% endif %}
+      </p>
+
+      <p class="text-gray-500 text-sm">Redirigiendo automáticamente...</p>
+    </div>
+  </div>
+
+  <!-- ✅ Script JS -->
+  <script src="../js/qr_escaneo_exitoso.js"></script>
+</body>
+</html>

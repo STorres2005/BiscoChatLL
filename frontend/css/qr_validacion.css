@@ -1,0 +1,119 @@
+:root {
+  --bg: #f7f0e3;
+  --panel: #ffffff;
+  --accent: #4ea1ff;
+  --text: #242a35;
+  --muted: #6c757d;
+  --border: #242a35;
+  --button-bg: #ff9f00;
+  --button-text: #ffffff;
+  --button-hover-bg: #e68900;
+  --focus-ring: #4ea1ff;
+}
+
+/* ===== Reset general ===== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* ===== Tarjeta ===== */
+.qr-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  padding: 2rem 2.5rem;
+  width: 100%;
+  max-width: 380px;
+  animation: fadeIn 1s ease;
+}
+
+/* ===== Logo dentro del rectángulo ===== */
+.logo-inside img {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background-color: var(--panel);
+  object-fit: cover;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  animation: fadeIn 1s ease;
+}
+
+/* ===== Títulos y texto ===== */
+.qr-card h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 1rem;
+}
+
+.qr-card p {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 1.5rem;
+}
+
+/* ===== Campos e input ===== */
+.input-box {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+input {
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  outline: none;
+  font-size: 1rem;
+  color: var(--text);
+  text-align: center;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+input:focus {
+  border-color: var(--focus-ring);
+  box-shadow: 0 0 0 2px var(--focus-ring);
+}
+
+/* ===== Botón ===== */
+button {
+  width: 100%;
+  padding: 1rem;
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  font-size: 1.1rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+  background-color: var(--button-hover-bg);
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+/* ===== Animación ===== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}

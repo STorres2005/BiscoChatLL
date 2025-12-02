@@ -1,0 +1,114 @@
+:root {
+  --bg: #f2efe6;
+  --panel: #ffffff;
+  --border: #242a35;
+  --accent: #4ea1ff;
+  --btn: #ff9f00;
+  --btn-red: #ff3b3b;
+  --text: #242a35;
+  --muted: #777;
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  background:var(--bg);
+  font-family:'Inter',sans-serif;
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+
+/* HEADER */
+header{
+  background:var(--panel);
+  padding:1rem;
+  border-bottom:2px solid var(--border);
+  display:flex;
+  justify-content:space-between;
+  font-weight:600;
+}
+
+.time{
+  font-family:monospace;
+  color:var(--accent);
+}
+
+/* PARTICIPANTES */
+.call-area{
+  flex:1;
+  padding:1rem;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:1rem;
+}
+
+.participant-card{
+  background:var(--panel);
+  border:2px solid var(--border);
+  width:150px;
+  height:180px;
+  border-radius:12px;
+  padding:1rem;
+  text-align:center;
+}
+
+.participant-card .avatar{
+  width:70px;
+  height:70px;
+  border-radius:50%;
+  border:3px solid var(--accent);
+  margin:0 auto 0.5rem;
+  background:url('../assets/usuario_gato.png');
+  background-size:cover;
+}
+
+.p-name{
+  font-weight:600;
+  margin-bottom:0.4rem;
+}
+
+.p-state{
+  font-size:0.8rem;
+  color:var(--muted);
+}
+
+/* CONTROLES */
+.controls{
+  background:var(--panel);
+  padding:0.7rem;
+  border-top:2px solid var(--border);
+  display:flex;
+  justify-content:space-around;
+}
+
+.btn-circle{
+  width:70px;
+  height:70px;
+  border-radius:50%;
+  background:var(--btn);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.btn-circle img{
+  width:35px;
+}
+
+.btn-red{
+  background:var(--btn-red);
+}
+
+.label{
+  margin-top:.3rem;
+  font-size:0.8rem;
+  color:var(--muted);
+  text-align:center;
+}

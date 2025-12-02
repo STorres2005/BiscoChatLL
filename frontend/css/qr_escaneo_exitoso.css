@@ -1,0 +1,139 @@
+:root {
+  --bg: #f7f0e3;
+  --panel: #ffffff;
+  --accent: #4ea1ff;
+  --text: #242a35;
+  --muted: #a8b0bd;
+  --border: #242a35;
+  --button-bg: #ff9f00;
+  --button-text: #ffffff;
+  --button-hover-bg: #e68900;
+  --focus-ring: #4ea1ff;
+}
+
+/* ===== General ===== */
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* ===== Tarjeta ===== */
+.qr-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  padding: 2rem 2.5rem;
+  width: 100%;
+  max-width: 380px;
+  animation: fadeIn 1s ease;
+  border-top: 4px solid var(--button-bg);
+  position: relative;
+  margin-top: 3rem; /* espacio para el logo flotante */
+}
+
+.qr-card h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 1rem;
+}
+
+.qr-card p {
+  font-size: 1rem;
+  color: var(--text);
+  margin-bottom: 1.5rem;
+}
+
+.qr-card .message {
+  color: var(--muted);
+}
+
+/* ===== Logo flotante fuera del recuadro ===== */
+.logo-floating {
+  position: absolute;
+  top: -60px; /* lo hace sobresalir del recuadro */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: #ffffff;
+  object-fit: cover;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+  animation: float 3s ease-in-out infinite, fadeIn 1s ease;
+}
+
+/* ===== Círculo animado ===== */
+.circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 6px solid var(--button-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  animation: pop 0.6s ease-out;
+  margin-top: 1rem;
+}
+
+@keyframes pop {
+  0% { transform: scale(0); opacity: 0; }
+  70% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+/* ===== Checkmark ===== */
+.checkmark {
+  width: 60px;
+  height: 60px;
+  stroke: var(--button-bg);
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: draw 0.8s ease-out forwards 0.4s;
+}
+
+@keyframes draw {
+  to { stroke-dashoffset: 0; }
+}
+
+/* ===== Animaciones globales ===== */
+.fade-in {
+  animation: fadeIn 1.5s ease-in forwards;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Flotación suave del logo ===== */
+@keyframes float {
+  0%, 100% { transform: translate(-50%, 0); }
+  50% { transform: translate(-50%, -6px); }
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 500px) {
+  .qr-card {
+    padding: 1.5rem;
+  }
+
+  .logo-floating {
+    width: 70px;
+    height: 70px;
+    top: -50px;
+  }
+}

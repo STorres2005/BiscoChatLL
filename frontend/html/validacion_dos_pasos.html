@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verificación de Correo</title>
+
+  <!-- ✅ Tailwind + Fuente -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- ✅ CSS personalizado -->
+  <link rel="stylesheet" href="../css/validacion_dos_pasos.css" />
+</head>
+
+<body class="flex items-center justify-center min-h-screen font-[Inter] bg-[#f7f0e3] p-4">
+  <div class="qr-card bg-white border border-[#242a35] shadow-lg rounded-2xl p-8 w-full max-w-sm text-center animate-fadeIn">
+    
+    <!-- 🔹 Logo dentro del recuadro -->
+    <div class="logo-inside mb-4">
+      <img 
+        src="../assets/Logo_biscoChat.png" 
+        alt="Logo BiscoChat"
+        class="w-20 h-20 rounded-full border-2 border-[#242a35] shadow-md object-cover bg-white mx-auto"
+      />
+    </div>
+
+    <h1 class="text-2xl font-bold text-[#242a35] mb-2">Verificación de Correo</h1>
+    <p id="instruction-text" class="text-[#6c757d] mb-5">
+      Ingresa tu correo para recibir un código de verificación.
+    </p>
+
+    <form id="otp-form" class="space-y-4">
+      <!-- Paso 1: Email -->
+      <div id="email-step" class="input-box">
+        <input
+          id="email-input"
+          type="email"
+          placeholder="usuario@correo.com"
+          class="w-full border border-[#242a35] rounded-lg p-3 text-center focus:ring-2 focus:ring-[#4ea1ff] focus:outline-none"
+          required
+        />
+        <button
+          type="submit"
+          id="send-email-button"
+          class="w-full bg-[#ff9f00] text-white font-semibold py-2 rounded-lg hover:bg-[#e68900] transition mt-3"
+        >
+          Enviar Código
+        </button>
+      </div>
+
+      <!-- Paso 2: Código -->
+      <div id="code-step" class="input-box hidden">
+        <input
+          id="otp-input"
+          type="text"
+          placeholder="000000"
+          maxlength="6"
+          class="w-full border border-[#242a35] rounded-lg p-3 text-center focus:ring-2 focus:ring-[#4ea1ff] focus:outline-none"
+        />
+        <button
+          type="submit"
+          id="otp-submit-button"
+          class="w-full bg-[#ff9f00] text-white font-semibold py-2 rounded-lg hover:bg-[#e68900] transition mt-3"
+        >
+          Validar Código
+        </button>
+      </div>
+    </form>
+
+    <div id="message-area" class="mt-4 text-center text-sm text-[#6c757d]"></div>
+  </div>
+
+  <!-- ✅ Script -->
+  <script src="../js/validacion_dos_pasos.js"></script>
+</body>
+</html>
